@@ -1,12 +1,16 @@
 <?php
-include_once("../common/php/DBConnector.php");
+require_once("../common/php/DBConnector.php");
 
-$db = $_SESSION['db'];
-$stmt = $db->prepare("SELECT * FROM `?`");
-$table = 'tprodotti';
-$stmt->execute([$table]);
+$connMySQL = new ConnectionMySQL();
+$pdo = $connMySQL->getConnection();
+$table = 'tabella';
+$stmt = $pdo->prepare("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='" . $table . "'");
+$stmt->execute();
 $stmtResponse = $stmt->fetchAll();
 
 foreach ($stmtResponse as $currentRecord) {
-    echo $currentRecord['name'];
+    if ($currentRecord["TABLE_SCHEMA"] == $_SESSION['db_name']) {
+        echo var_dump($currentRecord) . "<br></br>";
+        echo $currentRecord["COLUMN_NAME"] . " > " . $currentRecord["COLUMN_TYPE"] . "<br></br>";
+    }
 }
