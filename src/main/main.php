@@ -12,5 +12,8 @@ foreach ($stmtResponse as $currentRecord) {
     if ($currentRecord["TABLE_SCHEMA"] == $_SESSION['db_name']) {
         echo var_dump($currentRecord) . "<br></br>";
         echo $currentRecord["COLUMN_NAME"] . " > " . $currentRecord["COLUMN_TYPE"] . "<br></br>";
+        if(substr($currentRecord["TABLE_SCHEMA"], 0, 2) == "id"){
+            echo "foreign";
+        }
     }
 }
