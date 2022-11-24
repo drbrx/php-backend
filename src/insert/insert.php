@@ -8,7 +8,7 @@ if ($config != false) {
         $lineResult = explode(": ", fgets($config));
         $configInfo += [$lineResult[0] => preg_replace('/[^a-zA-Z0-9_ %\[\]\.\(\)%&-]/s', '', $lineResult[1])];
     }
-    echo var_dump($configInfo);
+    //echo var_dump($configInfo);
     fclose($config);
 }
 
@@ -20,7 +20,7 @@ $stmt->execute();
 $stmtResponse = $stmt->fetchAll();
 ?>
 
-<form>
+<form action="php/send.php">
     <table>
 
         <?php
@@ -30,19 +30,20 @@ $stmtResponse = $stmt->fetchAll();
                 echo "<td>" . $currentRecord["COLUMN_NAME"] . "</td><td>";
                 $maxLenght = preg_replace("/[^0-9]/", "", $currentRecord["COLUMN_TYPE"]);
                 $dataType = strtok($currentRecord["COLUMN_TYPE"], '(');
+                //echo $currentRecord["IS_NULLABLE"];
                 switch (isset($configInfo[$currentRecord["COLUMN_NAME"]]) ? $configInfo[$currentRecord["COLUMN_NAME"]] : $dataType) {
                     case "int":
-                        echo "<input type=\"text\" pattern=\"\d*\" maxlength=\"" . $maxLenght . "\" name=\"" . $currentRecord["COLUMN_NAME"] . "\" id=\"" . $currentRecord["COLUMN_NAME"] . "\" placeholder=\"numero di max " . $maxLenght . " cifre\"></input>";
+                        echo "<input type=\"text\" pattern=\"\d*\" maxlength=\"" . $maxLenght . "\" name=\"" . $currentRecord["COLUMN_NAME"] . "\" id=\"" . $currentRecord["COLUMN_NAME"] . "\" placeholder=\"numero di max " . $maxLenght . " cifre\" ". ($currentRecord["IS_NULLABLE"] != "NO" ? "" : "required")."></input>";
                         break;
                     case "varchar":
                         echo ($maxLenght > 20 ? "<textarea" : "<input type=\"text\"") .
-                            " \" maxlength=\"" . $maxLenght . "\" name=\"" . $currentRecord["COLUMN_NAME"] . "\" id=\"" . $currentRecord["COLUMN_NAME"] . "\" value=\"\" placeholder=\"testo di max " . $maxLenght . " caratteri\">" . ($maxLenght > 20 ? "</textarea>" : "</input>");
+                            " \" maxlength=\"" . $maxLenght . "\" name=\"" . $currentRecord["COLUMN_NAME"] . "\" id=\"" . $currentRecord["COLUMN_NAME"] . "\" value=\"\" placeholder=\"testo di max " . $maxLenght . " caratteri\" ". ($currentRecord["IS_NULLABLE"] != "NO" ? "" : "required").">" . ($maxLenght > 20 ? "</textarea>" : "</input>");
                         break;
                     case "date":
-                        echo "<input type=\"date\" name=\"" . $currentRecord["COLUMN_NAME"] . "\" id=\"" . $currentRecord["COLUMN_NAME"] . "\"></input>";
+                        echo "<input type=\"date\" name=\"" . $currentRecord["COLUMN_NAME"] . "\" id=\"" . $currentRecord["COLUMN_NAME"] . "\" ". ($currentRecord["IS_NULLABLE"] != "NO" ? "" : "required")."></input>";
                         break;
                     case "customText":
-                        echo "<input type=\"text\" maxlength=\"" . $configInfo[$currentRecord["COLUMN_NAME"] . 'Length'] . "\" name=\"" . $currentRecord["COLUMN_NAME"] . "\" id=\"" . $currentRecord["COLUMN_NAME"] . "\" placeholder=\"stringa di max " . $configInfo[$currentRecord["COLUMN_NAME"] . 'Length'] . " caratteri\"></input>";
+                        echo "<input type=\"text\" maxlength=\"" . $configInfo[$currentRecord["COLUMN_NAME"] . 'Length'] . "\" name=\"" . $currentRecord["COLUMN_NAME"] . "\" id=\"" . $currentRecord["COLUMN_NAME"] . "\" placeholder=\"stringa di max " . $configInfo[$currentRecord["COLUMN_NAME"] . 'Length'] . " caratteri\" ". ($currentRecord["IS_NULLABLE"] != "NO" ? "" : "required")."></input>";
                         break;
                 }
                 echo "</td></tr>";
