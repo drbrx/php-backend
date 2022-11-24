@@ -1,5 +1,16 @@
 <?php
 require_once("../common/php/DBConnector.php");
+$config = fopen("../../config.cfg", "r");
+if ($config != false) {
+    $configInfo = array();
+    while (!feof($config)) {
+        $lineResult = array();
+        $lineResult = explode(": ", fgets($config));
+        $configInfo += [$lineResult[0] => preg_replace('/[^a-zA-Z0-9_ %\[\]\.\(\)%&-]/s', '', $lineResult[1])];
+    }
+    echo var_dump($configInfo);
+    fclose($config);
+}
 
 $connMySQL = new ConnectionMySQL();
 $pdo = $connMySQL->getConnection();
@@ -24,8 +35,8 @@ $stmtResponse = $stmt->fetchAll();
                         echo "<input type=\"text\" pattern=\"\d*\" maxlength=\"" . $maxLenght . "\" name=\"" . $currentRecord["COLUMN_NAME"] . "\" id=\"" . $currentRecord["COLUMN_NAME"] . "\" placeholder=\"numero di max " . $maxLenght . " cifre\"></input>";
                         break;
                     case "varchar":
-                        echo $maxLenght > 20 ? "<textarea " : "<input type=\"text\"".
-                        " \" maxlength=\"" . $maxLenght . "\" name=\"" . $currentRecord["COLUMN_NAME"] . "\" id=\"" . $currentRecord["COLUMN_NAME"] . "\" value=\"\" placeholder=\"testo di max " . $maxLenght . " caratteri\"></input>";
+                        echo $maxLenght > 20 ? "<textarea" : "<input type=\"text\"" .
+                            " \" maxlength=\"" . $maxLenght . "\" name=\"" . $currentRecord["COLUMN_NAME"] . "\" id=\"" . $currentRecord["COLUMN_NAME"] . "\" value=\"\" placeholder=\"testo di max " . $maxLenght . " caratteri\"></input>";
                         break;
                     case "date":
                         echo "<input type=\"date\" name=\"" . $currentRecord["COLUMN_NAME"] . "\" id=\"" . $currentRecord["COLUMN_NAME"] . "\"></input>";
