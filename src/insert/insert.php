@@ -50,6 +50,14 @@ $stmtResponse = $stmt->fetchAll();
                         case "checkbox":
                             echo "<input type=\"checkbox\" name=\"" . $currentRecord["COLUMN_NAME"] . "\" id=\"" . $currentRecord["COLUMN_NAME"] . "\"></input>";
                             break;
+                        case "select": //TODO: clean field name to find table if it contains an id
+                            echo "<select name=\"" . $currentRecord["COLUMN_NAME"] . "\" id=\"" . $currentRecord["COLUMN_NAME"] . "\" " . ($currentRecord["IS_NULLABLE"] != "NO" ? "" : "required") . ">
+                            <option value=\"1\">TODO</option>
+                            </select>";
+                            break;
+                        case "radio":
+                            echo "todo";
+                            break;
                     }
                 }
                 echo "</td></tr>";
