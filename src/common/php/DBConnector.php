@@ -5,9 +5,12 @@ $config = fopen("../../config.cfg", "r");
 if ($config != false) {
     $configInfo = array();
     while (!feof($config)) {
-        $lineResult = array();
-        $lineResult = explode(": ", fgets($config));
-        $configInfo += [$lineResult[0] => preg_replace('/[^a-zA-Z0-9_ %\[\]\.\(\)%&-]/s', '', $lineResult[1])];
+        $currentLine = fgets($config);
+        if (substr($currentLine, 0, 2) != "//") {
+            $lineResult = array();
+            $lineResult = explode(": ", $currentLine);
+            $configInfo += [$lineResult[0] => preg_replace('/[^a-zA-Z0-9_ %\[\]\.\(\)%&-]/s', '', $lineResult[1])];
+        }
     }
     //echo var_dump($configInfo);
     fclose($config);
@@ -15,6 +18,7 @@ if ($config != false) {
 
 $_SESSION['db_name'] = $configInfo['dbName'];
 $_SESSION['table_name'] = $configInfo['tabName'];
+$_SESSION['rowsPerPage'] = $configInfo['rowsPerPage'];
 class ConnectionMySQL
 {
 
