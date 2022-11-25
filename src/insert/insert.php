@@ -59,7 +59,11 @@ $stmtResponse = $stmt->fetchAll();
                             echo "</select>";
                             break;
                         case "radio":
-                            echo "todo";
+                            $foreignTable = getForeignValues(strtolower(str_replace("id", '', $currentRecord["COLUMN_NAME"])), $configInfo);
+                            for ($i = 0; $i < count($foreignTable); $i++) {
+                                echo "<input type=\"radio\" name=\"" . $currentRecord["COLUMN_NAME"] . "\" id=\"" . $currentRecord["COLUMN_NAME"] . $i . "\" value=\"" . $foreignTable[$i]['id'] . "\">" . $foreignTable[$i][$configInfo['t' . strtolower(str_replace("id", '', $currentRecord["COLUMN_NAME"])) . 'MAINFIELD']] . "</input>";
+                            }
+
                             break;
                     }
                 }
@@ -68,7 +72,7 @@ $stmtResponse = $stmt->fetchAll();
         }
         ?>
         <tr>
-            <td>Submit</td>
+            <td></td>
             <td><input type="submit" name="submit" value="Invia" /></td>
         </tr>
     </table>
