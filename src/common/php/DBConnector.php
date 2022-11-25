@@ -1,6 +1,20 @@
 <?php
 session_start();
-$_SESSION['db_name'] = 'backoffice';
+
+$config = fopen("../../config.cfg", "r");
+if ($config != false) {
+    $configInfo = array();
+    while (!feof($config)) {
+        $lineResult = array();
+        $lineResult = explode(": ", fgets($config));
+        $configInfo += [$lineResult[0] => preg_replace('/[^a-zA-Z0-9_ %\[\]\.\(\)%&-]/s', '', $lineResult[1])];
+    }
+    //echo var_dump($configInfo);
+    fclose($config);
+}
+
+$_SESSION['db_name'] = $configInfo['dbName'];
+$_SESSION['table_name'] = $configInfo['tabName'];
 class ConnectionMySQL
 {
 
@@ -9,7 +23,6 @@ class ConnectionMySQL
     private const user = 'root';
     private const pass = '';
     private const charset = 'utf8mb4';
-    private $dsn = "mysql:host=" . ConnectionMySQL::host . ";dbname=" . ConnectionMySQL::db . ";charset=" . ConnectionMySQL::charset;
     private const options = [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -17,10 +30,12 @@ class ConnectionMySQL
         PDO::ATTR_PERSISTENT => true,
     ];
     private $connection = null;
+    private $dsn = null;
 
     function __construct()
     {
         try {
+            $this->dsn = "mysql:host=" . ConnectionMySQL::host . ";dbname=" . (isset($_SESSION['db_name']) ? $_SESSION['db_name'] : ConnectionMySQL::db) . ";charset=" . ConnectionMySQL::charset;
             $this->connection = new PDO($this->dsn, ConnectionMySQL::user, ConnectionMySQL::pass, ConnectionMySQL::options);
         } catch (PDOException $e) {
             throw new PDOException($e->getMessage(), (int) $e->getCode());

@@ -1,20 +1,10 @@
 <?php
 require_once("../common/php/DBConnector.php");
-$config = fopen("../../config.cfg", "r");
-if ($config != false) {
-    $configInfo = array();
-    while (!feof($config)) {
-        $lineResult = array();
-        $lineResult = explode(": ", fgets($config));
-        $configInfo += [$lineResult[0] => preg_replace('/[^a-zA-Z0-9_ %\[\]\.\(\)%&-]/s', '', $lineResult[1])];
-    }
-    //echo var_dump($configInfo);
-    fclose($config);
-}
+
 
 $connMySQL = new ConnectionMySQL();
 $pdo = $connMySQL->getConnection();
-$table = 'tabella';
+$table = $_SESSION['table_name'];
 $stmt = $pdo->prepare("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='" . $table . "'");
 $stmt->execute();
 $stmtResponse = $stmt->fetchAll();
@@ -50,7 +40,7 @@ $stmtResponse = $stmt->fetchAll();
                         case "checkbox":
                             echo "<input type=\"checkbox\" name=\"" . $currentRecord["COLUMN_NAME"] . "\" id=\"" . $currentRecord["COLUMN_NAME"] . "\"></input>";
                             break;
-                        case "select": //TODO: clean field name to find table if it contains an id
+                        case "select":
                             $foreignTable = getForeignValues(strtolower(str_replace("id", '', $currentRecord["COLUMN_NAME"])), $configInfo);
                             echo "<select name=\"" . $currentRecord["COLUMN_NAME"] . "\" id=\"" . $currentRecord["COLUMN_NAME"] . "\" " . ($currentRecord["IS_NULLABLE"] != "NO" ? "" : "required") . ">";
                             foreach ($foreignTable as $foreignRow) {
