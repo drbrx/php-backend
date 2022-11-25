@@ -51,9 +51,12 @@ $stmtResponse = $stmt->fetchAll();
                             echo "<input type=\"checkbox\" name=\"" . $currentRecord["COLUMN_NAME"] . "\" id=\"" . $currentRecord["COLUMN_NAME"] . "\"></input>";
                             break;
                         case "select": //TODO: clean field name to find table if it contains an id
-                            echo "<select name=\"" . $currentRecord["COLUMN_NAME"] . "\" id=\"" . $currentRecord["COLUMN_NAME"] . "\" " . ($currentRecord["IS_NULLABLE"] != "NO" ? "" : "required") . ">
-                            <option value=\"1\">TODO</option>
-                            </select>";
+                            $foreignTable = getForeignValues(strtolower(str_replace("id", '', $currentRecord["COLUMN_NAME"])), $configInfo);
+                            echo "<select name=\"" . $currentRecord["COLUMN_NAME"] . "\" id=\"" . $currentRecord["COLUMN_NAME"] . "\" " . ($currentRecord["IS_NULLABLE"] != "NO" ? "" : "required") . ">";
+                            foreach ($foreignTable as $foreignRow) {
+                                echo "<option value=\"" . $foreignRow['id'] . "\">" . $foreignRow[$configInfo['t' . strtolower(str_replace("id", '', $currentRecord["COLUMN_NAME"])) . 'MAINFIELD']] . "</option>";
+                            }
+                            echo "</select>";
                             break;
                         case "radio":
                             echo "todo";
@@ -70,3 +73,16 @@ $stmtResponse = $stmt->fetchAll();
         </tr>
     </table>
 </form>
+
+<?php
+function getForeignValues($tableName, $configInfo)
+{
+    $connMySQL = new ConnectionMySQL();
+    $pdo = $connMySQL->getConnection();
+    $foreignTableStmt = $pdo->prepare("SELECT id, " . $configInfo['t' . $tableName . 'MAINFIELD'] . " FROM " . $tableName);
+    $foreignTableStmt->execute();
+    $foreignTableStmtResponse = $foreignTableStmt->fetchAll();
+
+    //echo var_dump($foreignTableStmtResponse);
+    return $foreignTableStmtResponse;
+}
