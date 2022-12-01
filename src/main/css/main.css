@@ -1,0 +1,26 @@
+.sidebar {
+    height: 100%;
+    background-color: rgb(245, 245, 220);
+    border: 1px;
+    border-color: rgb(116, 116, 116);
+    font-size: x-large;
+}
+
+.sidebarButton {
+    width: 90%;
+    padding: 5%;
+    height: 25px;
+}
+
+.sidebarButton:hover {
+    font-size: xx-large;
+    height: 27px;
+    background-color: rgb(255, 255, 255);
+}
+
+.sidebarButtonCurrent {
+    width: 90%;
+    padding: 5%;
+    height: 25px;
+    color: magenta;
+}
