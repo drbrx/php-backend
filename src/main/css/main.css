@@ -1,26 +1,59 @@
-.sidebar {
-    height: 100%;
-    background-color: rgb(245, 245, 220);
-    border: 1px;
-    border-color: rgb(116, 116, 116);
-    font-size: x-large;
-}
-
-.sidebarButton {
-    width: 90%;
+#searchBarWrapper {
     padding: 5%;
-    height: 25px;
+    text-align: center;
+    background-color: rgba(0, 255, 255, 0.300);
+    height: 30%;
 }
 
-.sidebarButton:hover {
-    font-size: xx-large;
-    height: 27px;
-    background-color: rgb(255, 255, 255);
+#searchBar {
+    width: 100%;
 }
 
-.sidebarButtonCurrent {
-    width: 90%;
-    padding: 5%;
+#searchBar input {
+    padding: 15px;
+    font-size: 17px;
+    border: none;
+    float: left;
+    width: 80%;
+    background: white;
+}
+
+#searchBar button {
+    float: left;
+    width: 20%;
+    padding: 15px;
+    background: #ddd;
+    font-size: 17px;
+    border: none;
+    cursor: pointer;
+}
+
+#list {
+    height: 52.5%;
+    text-align: center;
+    align-items: center;
+    background-color: rgba(0, 255, 255, 0.300);
+}
+
+#list table {
+    margin: auto;
+    text-align: center;
+    font-size: larger;
+}
+
+#list table tr {
+    width: 500px;
+}
+
+#pageWrapper {
+    margin: auto;
+    text-align: center;
+    width: 500px;
+}
+
+.pageButton {
+    background-color: rgba(100, 148, 237, 1);
+    color: rgba(0, 0, 0, 1);
+    width: 50%;
     height: 25px;
-    color: magenta;
 }

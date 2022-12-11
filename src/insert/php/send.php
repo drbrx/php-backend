@@ -13,4 +13,4 @@ if (isset($_REQUEST)) {
     echo "no data";
 };
 
-header("location: ../../main/main.php");
+header("location: ../insert.php");
