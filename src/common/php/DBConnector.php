@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-$config = fopen("../../config.cfg", "r");
+$config = fopen(__DIR__ . "\config.cfg", "r");
 if ($config != false) {
     $configInfo = array();
     while (!feof($config)) {

@@ -1,0 +1,11 @@
+#deletionMessage {
+    width: 100%;
+    text-align: center;
+    font-size: xx-large;
+    margin-top: 10%;
+}
+
+#deletionMessageTip {
+    margin-top: 1%;
+    font-size: small;
+}
