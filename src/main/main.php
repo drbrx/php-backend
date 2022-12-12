@@ -5,7 +5,7 @@
 
 <body>
         <div class="sidebar" style="width:10%; float: left">
-                <div class="sidebarButtonCurrent"><a href="main.php3">View</a></div>
+                <div class="sidebarButtonCurrent"><a href="main.php">View</a></div>
                 <div class="sidebarButton"><a href="../insert/insert.php">Insert</a></div>
         </div>
 
@@ -27,24 +27,28 @@
                         $table = $_SESSION['table_name'];
                         $maxReads = $_SESSION['rowsPerPage'];
                         $page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 0;
-                        echo "SELECT * FROM $table " . (isset($_REQUEST['search']) ? "WHERE" . generateFilter($_REQUEST['search'], $table, $configInfo) : "") . "LIMIT $maxReads OFFSET " . ($page != 0 ? (($page * $maxReads) - 1) : 0);
+                        //echo "SELECT * FROM $table " . (isset($_REQUEST['search']) ? "WHERE" . generateFilter($_REQUEST['search'], $table, $configInfo) : "") . "LIMIT $maxReads OFFSET " . ($page != 0 ? (($page * $maxReads) - 1) : 0);
                         $stmt = $pdo->prepare("SELECT * FROM $table " . (isset($_REQUEST['search']) ? "WHERE" . generateFilter($_REQUEST['search'], $table, $configInfo) : "") . "LIMIT $maxReads OFFSET " . ($page != 0 ? (($page * $maxReads) - 1) : 0));
                         $stmt->execute();
                         $stmtResponse = $stmt->fetchAll();
-                        $stmt = $pdo->prepare("SELECT * FROM $table WHERE 1");
+                        $stmt = $pdo->prepare("SELECT * FROM $table " . (isset($_REQUEST['search']) ? "WHERE" . generateFilter($_REQUEST['search'], $table, $configInfo) : ""));
                         $stmt->execute();
                         $maxPages = ceil(count($stmt->fetchAll()) / $maxReads);
-
-                        echo '  <table>
+                        if ($maxPages > 0) {
+                                echo '  <table>
         <tr><th>id</th>     <th>' . $configInfo[$table . 'MAINFIELD'] . '</th>
         </tr>';
-                        foreach ($stmtResponse as $currentRecord) {
-                                echo    '<tr>   <td>' . $currentRecord['id'] . "</td>
+                                foreach ($stmtResponse as $currentRecord) {
+                                        echo    '<tr>   <td>' . $currentRecord['id'] . "</td>
                     <td>" . $currentRecord[$configInfo[$table . 'MAINFIELD']] . "</td>
                     <td><a href=\"../details/details.php?id=" . $currentRecord['id'] . "\">Details</a></td>
             </tr>";
+                                }
+                                echo '</table>';
+                        } else {
+                                echo "Non sono stati trovati dati. Prova con un filtro diverso se ne stai usando uno.";
                         }
-                        echo '</table>';
+
                         ?>
 
                         <div id="pageWrapper">
@@ -78,8 +82,11 @@ function generateFilter($searchTerm, $tableName, $configInfo)
                                 $foreignStmt = $foreignPdo->prepare("SELECT id FROM " . strtolower(str_replace("id", '', $currentColumn["COLUMN_NAME"])) . " WHERE " . $configInfo['t' . strtolower(str_replace("id", '', $currentColumn["COLUMN_NAME"])) . 'MAINFIELD'] . " LIKE '%" . $searchTerm . "%'");
                                 $foreignStmt->execute();
                                 $foreignStmtResponse = $foreignStmt->fetchAll();
-
-                                $filter .= "`" . $currentColumn["COLUMN_NAME"] . "` LIKE '%" . $foreignStmtResponse[0]['id'] . "%' ";
+                                if (isset($foreignStmtResponse[0]['id'])) {
+                                        $filter .= "`" . $currentColumn["COLUMN_NAME"] . "` LIKE '%" . $foreignStmtResponse[0]['id'] . "%' ";
+                                } else {
+                                        $filter .= "`" . $currentColumn["COLUMN_NAME"] . "` LIKE '%" . $searchTerm . "%' ";
+                                }
                         } else {
                                 $filter .= "`" . $currentColumn["COLUMN_NAME"] . "` LIKE '%" . $searchTerm . "%' ";
                         }
