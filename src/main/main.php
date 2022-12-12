@@ -5,7 +5,7 @@
 
 <body>
         <div class="sidebar" style="width:10%; float: left">
-                <div class="sidebarButtonCurrent"><a href="#">View</a></div>
+                <div class="sidebarButtonCurrent"><a href="main.php3">View</a></div>
                 <div class="sidebarButton"><a href="../insert/insert.php">Insert</a></div>
         </div>
 
@@ -27,7 +27,8 @@
                         $table = $_SESSION['table_name'];
                         $maxReads = $_SESSION['rowsPerPage'];
                         $page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 0;
-                        $stmt = $pdo->prepare("SELECT * FROM $table " . (isset($_REQUEST['search']) ? "WHERE" . generateFilter($_REQUEST['search'], $table) : "") . "LIMIT $maxReads OFFSET " . ($page != 0 ? (($page * $maxReads) - 1) : 0));
+                        echo "SELECT * FROM $table " . (isset($_REQUEST['search']) ? "WHERE" . generateFilter($_REQUEST['search'], $table, $configInfo) : "") . "LIMIT $maxReads OFFSET " . ($page != 0 ? (($page * $maxReads) - 1) : 0);
+                        $stmt = $pdo->prepare("SELECT * FROM $table " . (isset($_REQUEST['search']) ? "WHERE" . generateFilter($_REQUEST['search'], $table, $configInfo) : "") . "LIMIT $maxReads OFFSET " . ($page != 0 ? (($page * $maxReads) - 1) : 0));
                         $stmt->execute();
                         $stmtResponse = $stmt->fetchAll();
                         $stmt = $pdo->prepare("SELECT * FROM $table WHERE 1");
@@ -55,7 +56,7 @@
 </body>
 
 <?php
-function generateFilter($searchTerm, $tableName)
+function generateFilter($searchTerm, $tableName, $configInfo)
 {
         $filter = "";
 
@@ -70,7 +71,18 @@ function generateFilter($searchTerm, $tableName)
                         if ($filter != "") {
                                 $filter .= "OR ";
                         }
-                        $filter .= "`" . $currentColumn["COLUMN_NAME"] . "` LIKE '%" . $searchTerm . "%' ";
+                        if (isset($configInfo[$currentColumn["COLUMN_NAME"] . 'EXTERNAL']) && $configInfo[$currentColumn["COLUMN_NAME"] . 'EXTERNAL']) {
+
+                                $connMySQL = new ConnectionMySQL();
+                                $foreignPdo = $connMySQL->getConnection();
+                                $foreignStmt = $foreignPdo->prepare("SELECT id FROM " . strtolower(str_replace("id", '', $currentColumn["COLUMN_NAME"])) . " WHERE " . $configInfo['t' . strtolower(str_replace("id", '', $currentColumn["COLUMN_NAME"])) . 'MAINFIELD'] . " LIKE '%" . $searchTerm . "%'");
+                                $foreignStmt->execute();
+                                $foreignStmtResponse = $foreignStmt->fetchAll();
+
+                                $filter .= "`" . $currentColumn["COLUMN_NAME"] . "` LIKE '%" . $foreignStmtResponse[0]['id'] . "%' ";
+                        } else {
+                                $filter .= "`" . $currentColumn["COLUMN_NAME"] . "` LIKE '%" . $searchTerm . "%' ";
+                        }
                 }
         }
 
