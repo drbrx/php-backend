@@ -5,27 +5,41 @@ body {
 
 .sidebar {
     height: 100%;
-    background-color: rgb(245, 245, 220);
+    background-color: rgb(75, 75, 75);
     border: 1px;
     border-color: rgb(116, 116, 116);
     font-size: x-large;
 }
 
+.sidebar div {
+    padding: 5px;
+}
+
+.sidebar a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+}
+
 .sidebarButton {
-    width: 90%;
-    padding: 5%;
-    height: 25px;
+    width: 100%;
+    height: 50px;
 }
 
 .sidebarButton:hover {
     font-size: xx-large;
-    height: 27px;
-    background-color: rgb(255, 255, 255);
+    height: 50px;
+    background-color: #cfe2ff;
 }
 
 .sidebarButtonCurrent {
-    width: 90%;
-    padding: 5%;
-    height: 25px;
-    color: magenta;
+    width: 100%;
+    height: 50px;
+    color: rgb(255, 255, 255);
+}
+
+.sidebarButtonCurrent:hover {
+    width: 100%;
+    height: 50px;
+    color: rgb(255, 255, 255);
 }
