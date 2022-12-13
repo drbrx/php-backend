@@ -1,3 +1,9 @@
+table {
+    font-size: larger;
+    margin: auto;
+    margin-top: 200px;
+}
+
 #deletionMessage {
     width: 100%;
     text-align: center;
