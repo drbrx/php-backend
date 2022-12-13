@@ -13,7 +13,7 @@
                 <div id="searchBarWrapper">
                         <div id="searchBar">
                                 <form action="main.php">
-                                        <input type="text" placeholder="Search..." name="search">
+                                        <input type="text" placeholder="Search globally across all fields and records" name="search">
                                         <button type="submit">Go</button>
                                 </form>
                         </div>
