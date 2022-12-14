@@ -10,7 +10,6 @@
 <?php
 require_once("../common/php/DBConnector.php");
 
-
 $connMySQL = new ConnectionMySQL();
 $pdo = $connMySQL->getConnection();
 $table = $_SESSION['table_name'];
